@@ -1,56 +1,110 @@
-# ExamIA UPCH — v0.2
+<div align="center">
 
-Piloto de exámenes y revisión de evidencias. **No es todavía una plataforma multiusuario segura ni apta para evaluaciones oficiales.** Los perfiles son simulados y el almacenamiento es local a cada navegador.
+# ExamIA UPCH
 
-## Probar la revisión
+### Evaluación virtual con supervisión local y revisión docente
 
-1. Abra la aplicación y compruebe que el encabezado dice `v0.2 · piloto local`.
-2. Entre como docente de prueba. Abra **Editar y configurar** en un examen.
-3. Active **Cámara obligatoria** y **Guardar fotos de cámara**. Los exámenes migrados conservan su configuración anterior: no se activa una cámara previamente desactivada sin intervención del docente.
-4. Opcionalmente active **Exigir compartir una pantalla completa**. El estudiante debe aceptar el aviso y elegir una pantalla completa en el selector del navegador, no solo una pestaña.
-5. Guarde, pulse **Probar examen**, acepte el aviso y conceda los permisos solicitados. Inicie la prueba, escriba una respuesta, pruebe copiar/pegar, cambie de pestaña y vuelva.
-6. Entregue y abra **Entregas y evidencias → Revisar**. Puede ampliar/descargar imágenes, filtrar eventos, revisar respuestas, calificar desarrollo y exportar el informe.
+Una plataforma para crear exámenes, recoger respuestas y revisar incidencias con evidencia, manteniendo al docente a cargo de la evaluación.
 
-## Cambios implementados
+**JavaScript · Google Apps Script · Google Sheets · Google Drive · MediaPipe**
 
-- Historial por intento con tipo de evento, hora local, tiempo desde el inicio, pregunta y duración de la pérdida de foco/visibilidad.
-- Registro de acciones copiar, cortar y pegar dentro del área del examen, con cantidad de caracteres cuando está disponible. Bloqueo opcional de pegado y arrastre. No se conserva el texto del portapapeles ni se lee el portapapeles globalmente.
-- Fotografías JPEG de cámara y capturas de la pantalla autorizada vinculadas a eventos. Capturas al inicio y entrega cuando hay fotograma disponible, en incidencias, durante una salida prolongada y periódicamente.
-- Galería con ampliación y descarga individual. Avisos cuando no hay captura disponible, se alcanza un límite o falta señal.
-- Respuestas cerradas y de desarrollo conservadas, guardado automático, recuperación de intentos con plazo original y entrega al agotarse el tiempo.
-- Calificación automática de preguntas cerradas y manual de desarrollo. Observaciones y estado de revisión docente, sin penalización automática por incidencias.
-- Informes HTML autocontenidos con imágenes embebidas, respaldo JSON con imágenes e incidencias CSV.
-- Señales de cámara/pantalla interrumpidas, desconexión de Internet y entrada/salida de pantalla completa. Cuando una fuente obligatoria se pierde, se deshabilitan las respuestas hasta reconectarla; el tiempo no se detiene.
-- Integración opcional de MediaPipe Face Detector para ausencia persistente y múltiples rostros. Su carga real y precisión deben validarse en los dispositivos de uso; no es reconocimiento de identidad, detección de teléfonos, orientación de cabeza ni prueba de fraude.
+[Abrir plataforma](https://ulewis.github.io/ExamIA/) · [Instalación](docs/INSTALACION.md) · [Arquitectura y seguridad](docs/SEGURIDAD.md) · [Validación](docs/VALIDACION.md)
 
-## Límites que no deben confundirse con detección de copia
+</div>
 
-Una página web puede detectar pérdida de visibilidad o foco, **pero no obtener automáticamente el título, contenido o URL de otra pestaña**. La pantalla compartida permite revisar visualmente lo que aparece en el monitor autorizado, si la captura lo muestra. No se inspeccionan otras pantallas físicas y no se garantiza observar todo cambio de ventana. Los temporizadores y fotogramas pueden verse afectados por el navegador en segundo plano.
+---
 
-Un evento copiar/pegar indica una acción dentro del examen; no demuestra el origen del texto ni su destino. Una ausencia de rostro puede deberse a postura, iluminación u oclusión. Toda señal requiere revisión humana.
+## El proyecto
 
-No hay grabación continua ni audio. Las capturas no equivalen a un video. No se implementa vigilancia fuera del examen.
+ExamIA está orientado a la comunidad de la Universidad Peruana Cayetano Heredia. Integra la creación de evaluaciones, el acceso institucional y la supervisión del navegador en un mismo flujo: **preparar → rendir → revisar → publicar resultados**.
 
-## Datos y privacidad
+La cámara se procesa en el equipo del estudiante. El servidor administra los permisos, los plazos, las respuestas y las calificaciones. Las alertas sirven para revisar lo ocurrido, no para decidir automáticamente que existe fraude.
 
-El código público de GitHub no recibe imágenes, respuestas ni informes. Los datos de intentos se guardan con IndexedDB en el navegador. Hay una copia local de recuperación de metadatos/respuestas, sin imágenes, en localStorage. No existe cifrado de aplicación ni protección frente a otros usuarios del mismo perfil de navegador.
+## Capacidades
 
-Las imágenes tienen un plazo de 7 días y se eliminan al volver a abrir la aplicación después de ese plazo. Máximo 240 imágenes y 2500 eventos por intento; se muestran las limitaciones. Los informes descargados no se eliminan automáticamente. El botón de eliminación borra el intento y sus imágenes locales, no las copias descargadas.
+| Área | Funciones |
+| --- | --- |
+| **Evaluaciones** | Opción múltiple, verdadero/falso y desarrollo; puntajes, duración, publicación y estudiantes autorizados. |
+| **Acceso** | Google institucional UPCH; perfiles de administrador, docente y estudiante asignados en servidor. |
+| **Supervisión** | Cámara configurable por examen; IA automática y obligatoria cuando se exige cámara; ausencia y múltiples rostros. |
+| **Evidencias** | Fotografías de cámara, capturas del monitor autorizado, copiar/cortar/pegar, foco, visibilidad y eventos técnicos. |
+| **Entregas** | Inicio y vencimiento en servidor, guardado periódico, recuperación local y comprobante de recepción. |
+| **Revisión** | Historial por intento, imágenes privadas, calificación automática y manual, observaciones e informes HTML, JSON y CSV. |
 
-No use datos reales sensibles en este piloto. No suba informes ni fotografías a un repositorio público. Los datos de v0.1 se migran sin borrar el almacenamiento anterior: las imágenes y respuestas que v0.1 nunca guardó no pueden reconstruirse.
+## Roles
 
-La IA opcional descarga código/WebAssembly de jsDelivr (`@mediapipe/tasks-vision@0.10.14`) y el modelo BlazeFace de Google. Esas solicitudes exponen metadatos de red normales a esos proveedores; los fotogramas no se envían para inferencia. Para despliegue institucional deben revisarse las dependencias y considerarse su alojamiento propio.
+**Administrador.** Autoriza docentes, administra cuentas y consulta las evaluaciones de la instalación.
 
-## Estado de validación
+**Docente.** Crea sus exámenes, asigna estudiantes, configura la supervisión, revisa evidencias y publica las notas.
 
-Se revisó sintaxis con `node --check` y se ejecutaron 18 comprobaciones de interfaz/flujo en Chromium: respuestas, eventos de portapapeles, imágenes enlazadas, filtros, ampliación, calificación, exportaciones, recuperación, bloqueo opcional de pegado, exigencia de pantalla, reconexión de cámara y eliminación.
+**Estudiante.** Accede a los exámenes asignados, responde con guardado periódico y consulta las notas publicadas. No selecciona su rol ni activa o desactiva la IA.
 
-**Alcance de esas pruebas:** el entorno bloquea la navegación del navegador; la interfaz se cargó directamente y se usaron dobles de prueba para IndexedDB, localStorage, cámara, pantalla y eventos de visibilidad. Los dobles no forman parte de la aplicación publicada. Esto NO valida permisos de dispositivos reales, persistencia nativa de IndexedDB, precisión de MediaPipe ni funcionamiento con 50 estudiantes simultáneos.
+## Arquitectura
 
-## Pendiente imprescindible para uso institucional
+```text
+GitHub Pages
+    └── Interfaz de ExamIA
+         ├── Cámara + MediaPipe → análisis en el dispositivo
+         ├── IndexedDB → recuperación temporal
+         └── Apps Script → identidad, autorización y reglas de evaluación
+               ├── Google Sheets → exámenes, respuestas, notas y eventos
+               └── Google Drive → imágenes privadas
+```
 
-Autenticación Google UPCH verificada en servidor, autorización real de administrador/docente/estudiante, aislamiento por cursos, respuestas correctas fuera del cliente, tiempo e intentos controlados por servidor, almacenamiento compartido y restringido de evidencias, recepción verificable de entregas, políticas institucionales y pruebas de carga con hasta 50 estudiantes. Un frontend estático y registros locales no ofrecen integridad frente a manipulación.
+El repositorio contiene **código y documentación**, nunca evidencias reales, respuestas de estudiantes ni secretos OAuth.
 
-## Publicación
+## Puesta en marcha
 
-GitHub Pages: rama `main`, carpeta raíz. `index.html` carga `app-v02.js`. No necesita instalar dependencias para probar la interfaz. La IA opcional requiere descargar sus dependencias y modelo.
+1. Copia `apps-script/Code.gs`, `apps-script/Bridge.html` y el manifiesto a un proyecto de Google Apps Script.
+2. Ejecuta `setupExamIA_()` con tu cuenta UPCH. El instalador crea la base de datos, la carpeta privada y el administrador inicial.
+3. Configura el acceso OAuth de Google y despliega la aplicación web.
+4. Coloca la URL `/exec` en `config.js` y completa la prueba de aceptación.
+
+**La guía completa está en [docs/INSTALACION.md](docs/INSTALACION.md).** Incluye las propiedades necesarias, los permisos, la conexión con Pages y los errores habituales.
+
+Mientras `apiUrl` esté vacío, la página conserva el piloto local existente. Al configurar la URL, carga el modo conectado. La demostración anterior también permanece en `demo.html`.
+
+## Estructura del repositorio
+
+```text
+apps-script/
+  Code.gs               API, identidad, datos, evaluación y retención
+  Bridge.html           Canal entre GitHub Pages y Apps Script
+  appsscript.json       Manifiesto y permisos
+config.js               URL pública de la instalación; sin secretos
+boot.js                 Selección de modo local o conectado
+cloud-client.js          Transporte autenticado
+cloud-app.js             Interfaz multiusuario conectada
+index.html              Interfaz principal
+app-v021.js             Piloto local conservado
+demo.html              Acceso independiente a la demostración
+docs/                  Instalación, seguridad y validación
+tests/                 Pruebas del backend y de la interfaz
+```
+
+## Desarrollo y pruebas
+
+No se necesita compilar el frontend ni instalar dependencias para publicarlo en Pages.
+
+```bash
+node tests/backend.test.cjs
+node --check cloud-app.js
+node --check cloud-client.js
+```
+
+Las pruebas de interfaz usan Python y Playwright. El alcance y los resultados están documentados en [VALIDACION.md](docs/VALIDACION.md); las pruebas con servicios simulados no sustituyen una validación en Google Workspace.
+
+## Estado de la versión
+
+**v0.3.0 — integración preparada para instalar.** Incluye backend, frontend conectado y documentación de despliegue. No se incluyen credenciales ni una implementación activa de Apps Script.
+
+El objetivo inicial es un grupo de hasta **50 estudiantes**, sujeto a un simulacro de carga y a las cuotas de la cuenta utilizada. La aprobación para uso institucional requiere validar acceso, persistencia, dispositivos, privacidad y capacidad en la instalación real.
+
+## Supervisión responsable
+
+La plataforma informa qué datos captura y solicita los permisos del navegador. No graba audio, no reconoce identidades y no conoce automáticamente la dirección de otra pestaña. Las incidencias siempre requieren interpretación humana. Consulta [SEGURIDAD.md](docs/SEGURIDAD.md) para conocer los límites y la retención.
+
+---
+
+**Responsable del proyecto:** Lewis De La Cruz  
+**Contexto académico:** Universidad Peruana Cayetano Heredia · Ingeniería Biomédica

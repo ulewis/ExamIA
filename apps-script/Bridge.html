@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta name="referrer" content="no-referrer"></head><body>
+<script>
+'use strict';
+const APP_ORIGIN = <?!= origin ?>;
+const CHANNEL_NONCE = <?!= nonce ?>;
+// This frame never renders exam data. It relays only to the configured Pages origin.
+window.addEventListener('message', event => {
+  const m=event.data;
+  if(event.origin!==APP_ORIGIN || event.source!==window.top || !m ||
+     m.type!=='examia-rpc' || m.nonce!==CHANNEL_NONCE || typeof m.id!=='string') return;
+  const send = result => window.top.postMessage({type:'examia-result',nonce:CHANNEL_NONCE,id:m.id,result},APP_ORIGIN);
+  google.script.run.withSuccessHandler(send).withFailureHandler(()=>send({ok:false,error:'No se pudo ejecutar la solicitud en Apps Script.'})).rpc(m.request);
+});
+window.top.postMessage({type:'examia-ready',nonce:CHANNEL_NONCE},APP_ORIGIN);
+</script></body></html>

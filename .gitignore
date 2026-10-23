@@ -1,0 +1,14 @@
+# Never commit credentials, student data, or local deployment settings.
+.env
+.env.*
+.clasprc.json
+.clasp.json
+client_secret*.json
+credentials*.json
+*.log
+__pycache__/
+node_modules/
+artifacts/
+exports/
+evidence/
+tests/ui-review.png

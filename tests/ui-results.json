@@ -1,0 +1,21 @@
+{
+  "passed": 15,
+  "checks": [
+    "Institutional home renders",
+    "No role selector on connected login",
+    "Roster and publication controls present",
+    "Question editor adds a question",
+    "Editor calls backend save",
+    "Administrator role API connected",
+    "Consent required before start",
+    "No AI toggle in preparation",
+    "Answers transmitted",
+    "Clipboard event transmitted",
+    "Server receipt shown after submission",
+    "Review and manual grading available",
+    "Manual marks go to backend",
+    "CSV report downloads",
+    "HTML report downloads"
+  ],
+  "scope": "Chromium DOM with mocked IndexedDB and Apps Script API. Navigation was blocked by the environment; HTML loaded directly. No live OAuth, devices, MediaPipe, bridge or load test."
+}

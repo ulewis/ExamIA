@@ -1,0 +1,46 @@
+PASS reject unauthenticated request
+PASS reject tampered HMAC session
+PASS student cannot promote themselves
+PASS student cannot create exams
+PASS teacher creates a versioned exam
+PASS roster isolates exams from outsiders
+PASS student listing removes answer keys and roster
+PASS other teacher cannot overwrite the exam
+PASS stale revisions cannot overwrite changes
+PASS student cannot start another course exam
+PASS start requires explicit notice acceptance
+PASS start rejects a changed consent revision
+PASS server creates the deadline and redacts keys
+PASS repeated start is idempotent
+PASS only the attempt owner may sync
+PASS sync stores responses and event receipt
+PASS retried sequence does not overwrite newer answers
+PASS whole batch validates before any writes
+PASS invalid alternatives are rejected
+PASS student cannot read teacher review
+PASS unrelated teacher cannot read evidence
+PASS JPEG upload stores a private file once
+PASS non-JPEG payload rejected
+PASS unconfigured screen image rejected
+PASS student cannot download evidence
+PASS unrelated teacher cannot download evidence
+PASS authorized teacher can retrieve image
+PASS editing exam does not change an existing attempt key
+PASS late responses are rejected, saved responses graded
+PASS submission retry preserves receipt
+PASS student cannot write a grade
+PASS manual marks are bounded
+PASS teacher grading combines automatic and manual points
+PASS student results remain hidden until published
+PASS published results visible to owner only
+PASS admin authorizes teacher; old sessions revoked
+PASS admin cannot lock themselves out
+PASS prototype keys are not accepted as question IDs
+PASS spreadsheet formula-like emails rejected
+PASS unknown route rejected
+PASS expired images inaccessible and moved to trash
+PASS expired session rejected
+PASS OAuth callback with unknown state never calls token endpoint
+PASS OAuth state consumed before a failed exchange
+
+44 backend checks passed. Google deployment, OAuth and browser devices are NOT exercised.
